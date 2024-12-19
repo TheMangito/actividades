@@ -795,3 +795,280 @@ Las funciones paramétricas son una forma de representar curvas en el espacio me
 - **Curvas en el espacio**: Se utilizan para representar curvas que no pueden expresarse fácilmente en la forma *y=f(x)y = f(x)y=f(x)*.
 - **Movimiento: Los parámetros** pueden tener interpretaciones de tiempo, lo que permite describir el movimiento de un punto a lo largo de una curva.
 - **Dimensiones adicionales**: Se pueden usar para describir curvas en el espacio tridimensional o en dimensiones más altas. Aplicaciones: • Cinemática: Para describir la trayectoria de un objeto en movimiento. • Gráficos por computadora: Se utilizan para generar formas y animaciones complejas. • Geometría: Para representar curvas y superficies que no tienen una representación algebraica simple.
+
+## 10 Imagen pixel art desde matriz
+Crea una imagen a partir de una matriz de valores de intensidad (*en escala de grises*). La matriz se convierte a una imagen uint8 y se muestra en una ventana. Es un ejemplo de cómo generar imágenes directamente a partir de datos numéricos (matrices), similar a “pixel art”.
+
+```python
+import cv2 as cv
+import numpy as np
+
+# Definir una matriz en escala de grises
+matriz = np.array([
+[236, 215, 213, 213, 213, 214, 214, 214, 214, 214, 213, 212, 212, 212, 214, 214, 214, 214, 214, 214, 214, 214, 214, 214, 214, 214, 214, 214, 214, 215, 236], 
+[215, 118, 103, 105, 117, 96, 112, 73, 110, 96, 108, 97, 75, 93, 74, 105, 95, 119, 103, 105, 106, 88, 106, 95, 122, 105, 114, 98, 81, 92, 215], 
+[214, 99, 75, 90, 108, 77, 100, 53, 98, 68, 100, 89, 70, 84, 55, 99, 68, 111, 90, 87, 91, 53, 94, 68, 112, 90, 101, 80, 61, 75, 213], 
+[211, 97, 73, 57, 79, 53, 54, 54, 97, 69, 78, 57, 55, 54, 54, 102, 68, 91, 54, 71, 54, 54, 93, 68, 101, 54, 87, 53, 54, 75, 213], 
+[212, 96, 73, 54, 75, 54, 55, 54, 97, 68, 76, 57, 54, 54, 54, 99, 68, 91, 54, 72, 54, 54, 93, 68, 101, 54, 88, 54, 54, 75, 214], 
+[212, 95, 72, 54, 76, 54, 54, 54, 99, 68, 78, 57, 54, 54, 54, 97, 68, 91, 54, 73, 54, 54, 93, 68, 101, 54, 88, 54, 54, 75, 214], 
+[211, 96, 72, 55, 78, 54, 54, 54, 98, 68, 79, 57, 54, 54, 54, 99, 68, 90, 54, 72, 54, 54, 93, 68, 101, 54, 88, 54, 54, 75, 214], 
+[211, 98, 74, 55, 76, 53, 54, 53, 97, 67, 79, 57, 54, 54, 54, 101, 68, 91, 54, 73, 54, 54, 94, 68, 101, 54, 88, 53, 53, 75, 214], 
+[213, 100, 77, 54, 75, 54, 54, 54, 98, 68, 79, 57, 54, 54, 54, 99, 68, 91, 54, 73, 54, 54, 93, 68, 101, 54, 88, 54, 54, 75, 214], 
+[214, 101, 80, 54, 80, 54, 54, 54, 101, 69, 77, 56, 54, 54, 54, 94, 68, 90, 54, 74, 54, 54, 88, 68, 99, 54, 88, 54, 54, 74, 214], 
+[214, 202, 198, 197, 197, 191, 187, 189, 217, 236, 236, 236, 237, 237, 238, 205, 189, 215, 237, 237, 231, 209, 205, 189, 207, 238, 237, 237, 165, 167, 214], 
+[214, 208, 208, 209, 208, 199, 194, 189, 213, 237, 239, 238, 240, 240, 241, 211, 193, 219, 236, 244, 238, 209, 202, 188, 204, 240, 246, 247, 169, 170, 214], 
+[214, 166, 163, 188, 180, 10, 10, 10, 10, 10, 188, 189, 10, 115, 212, 229, 247, 120, 9, 193, 209, 10, 10, 10, 10, 9, 217, 247, 191, 192, 214], 
+[215, 180, 179, 196, 188, 119, 68, 10, 79, 112, 193, 193, 10, 84, 192, 210, 229, 114, 10, 194, 210, 113, 80, 10, 63, 108, 214, 238, 198, 198, 214], 
+[215, 212, 212, 212, 212, 213, 165, 10, 188, 212, 212, 206, 10, 10, 10, 155, 212, 109, 10, 196, 212, 212, 185, 10, 162, 212, 212, 212, 213, 212, 214], 
+[215, 202, 201, 212, 212, 211, 165, 10, 189, 212, 211, 206, 10, 55, 155, 150, 152, 56, 10, 196, 212, 212, 186, 10, 165, 212, 204, 200, 211, 212, 214], 
+[214, 192, 190, 212, 212, 211, 164, 10, 191, 212, 212, 206, 10, 101, 212, 150, 10, 10, 10, 197, 212, 212, 186, 10, 162, 212, 195, 188, 211, 212, 214], 
+[214, 192, 190, 175, 175, 175, 139, 10, 175, 195, 181, 174, 10, 101, 212, 207, 191, 80, 10, 199, 211, 195, 176, 10, 143, 185, 180, 178, 196, 198, 214], 
+[214, 192, 191, 158, 158, 158, 137, 10, 175, 188, 167, 162, 10, 102, 212, 212, 212, 110, 10, 199, 210, 188, 176, 10, 138, 158, 158, 158, 189, 192, 214], 
+[214, 170, 164, 158, 192, 245, 216, 161, 164, 165, 240, 239, 148, 155, 167, 166, 166, 191, 205, 172, 167, 168, 202, 241, 211, 158, 158, 158, 164, 170, 214], 
+[214, 167, 161, 162, 189, 236, 210, 162, 162, 162, 230, 231, 162, 162, 162, 159, 153, 191, 205, 166, 162, 162, 199, 231, 209, 162, 163, 162, 162, 167, 214], 
+[213, 100, 82, 54, 54, 54, 54, 54, 99, 68, 72, 54, 54, 54, 54, 99, 68, 89, 57, 57, 70, 57, 79, 68, 61, 54, 53, 54, 54, 75, 214], 
+[213, 98, 79, 54, 54, 54, 53, 54, 99, 68, 73, 54, 54, 54, 54, 99, 68, 90, 54, 54, 65, 54, 80, 67, 61, 54, 54, 53, 54, 75, 214], 
+[211, 98, 76, 57, 54, 54, 54, 54, 99, 68, 73, 54, 54, 54, 54, 100, 68, 91, 54, 54, 63, 54, 79, 68, 61, 54, 54, 54, 53, 75, 214], 
+[212, 97, 72, 54, 54, 54, 54, 54, 99, 68, 74, 54, 54, 53, 54, 100, 68, 93, 54, 54, 60, 54, 78, 69, 61, 54, 54, 54, 54, 75, 214], 
+[213, 96, 71, 55, 54, 54, 54, 55, 99, 68, 75, 53, 54, 54, 54, 101, 68, 93, 54, 54, 57, 54, 78, 68, 61, 53, 54, 54, 54, 75, 214], 
+[211, 98, 72, 55, 54, 53, 54, 54, 99, 68, 74, 54, 54, 54, 54, 101, 68, 93, 54, 54, 55, 54, 78, 68, 61, 54, 54, 54, 54, 75, 215], 
+[211, 98, 73, 55, 54, 54, 54, 54, 99, 68, 76, 54, 53, 54, 54, 101, 68, 92, 54, 54, 54, 56, 79, 68, 61, 54, 54, 55, 54, 74, 215], 
+[213, 99, 75, 55, 57, 68, 60, 54, 99, 68, 77, 54, 67, 63, 54, 102, 67, 91, 54, 86, 86, 57, 78, 68, 61, 54, 64, 67, 54, 76, 215], 
+[215, 116, 99, 76, 73, 69, 71, 74, 112, 94, 91, 73, 69, 70, 74, 109, 91, 103, 74, 100, 104, 75, 89, 69, 71, 74, 70, 69, 73, 92, 215], 
+[229, 215, 215, 215, 214, 214, 215, 214, 214, 214, 213, 213, 213, 213, 213, 213, 213, 213, 213, 213, 214, 214, 214, 214, 214, 214, 213, 213, 213, 215, 228]
+])
+
+# Convertir la matriz a un formato adecuado para visualizar con OpenCV
+matriz = np.uint8(matriz)  # Convertir a tipo de dato correcto (8 bits sin signo)
+
+# Mostrar la imagen
+cv.imshow('Imagen en Escala de Grises', matriz)
+cv.waitKey(0)
+cv.destroyAllWindows()
+
+```
+## 11 Transformaciones geométricas
+Realiza una rotación manual de una imagen (*logo1.png*) aplicando fórmulas matemáticas de transformación geométrica píxel a píxel, sin usar funciones de rotación integradas de OpenCV. Expande la imagen para evitar el recorte y calcula las nuevas coordenadas de cada píxel en la imagen resultante. Esto demuestra cómo implementar transformaciones geométricas (*como por ejemplo rotación*) a bajo nivel.
+
+
+```python
+import math
+import cv2 as cv
+import numpy as np
+
+img = cv.imread(r"C:\Users\sresm\Documents\ARCHIVOS TEMPORALES\Graficacion\logo1.png", 0)
+x, y = img.shape
+angle = 70
+rotated_img = np.zeros((x*3, y*3), dtype=np.uint8)
+
+xx, yy = rotated_img.shape
+centro_x, centro_y = int(x  // 2), int(y  // 2)
+radian_Angle = math.radians(angle)
+
+for i in range(x):
+    for j in range(y):
+        
+        new_x = int((int((j - centro_x) * math.cos(radian_Angle) - (i - centro_y) * math.sin(radian_Angle) + centro_x))*2)+20
+        new_y = int((int((j - centro_x) * math.sin(radian_Angle) + (i - centro_y) * math.cos(radian_Angle) + centro_y))*2)+20
+        if 0 <= new_x < y*3 and 0 <= new_y < x*3:
+            rotated_img[new_y, new_x] = img[i, j]
+
+cv.imshow("img", rotated_img)
+cv.waitKey()
+cv.destroyAllWindows()
+```
+
+## 12 Haarcascade
+Utiliza un clasificador Haarcascade para detectar rostros en tiempo real desde la cámara. Luego, sobre cada rostro detectado coloca una máscara PNG con canal alfa (transparencia) 
+
+```python
+import cv2
+import numpy as np
+
+# Cargar la máscara que deseas agregar (asegúrate de que sea PNG con transparencia)
+mascara = cv2.imread(r'C:\Users\sresm\Graficacion\Actividades\haarcascade\perro.png', cv2.IMREAD_UNCHANGED)  # Cargar PNG con transparencia
+
+# Cargar el clasificador preentrenado de rostros
+face_cascade = cv2.CascadeClassifier(r'C:\Users\Graficacion\Actividades\haarcascade\clasificador.xml')
+
+
+# Capturar video desde la cámara (o puedes usar un archivo de video)
+video = cv2.VideoCapture(0)  # Cambia el 0 por la ruta de un archivo de video si quieres usar un archivo
+
+while True:
+    # Leer cada frame del video
+    ret, frame = video.read()
+
+    if not ret:
+        break
+
+    # Convertir el frame a escala de grises
+    frame_gris = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Detectar los rostros en el frame
+    rostros = face_cascade.detectMultiScale(frame_gris, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+
+    # Procesar cada rostro detectado
+    for (x, y, w, h) in rostros:
+        # Redimensionar la máscara para que coincida con el tamaño del rostro detectado
+        mascara_redimensionada = cv2.resize(mascara, (w, h))
+
+        # Separar los canales de la máscara: color y alfa (transparencia)
+        mascara_rgb = mascara_redimensionada[:, :, :3]  # Canal de color
+        mascara_alpha = mascara_redimensionada[:, :, 3]  # Canal de transparencia
+
+        # Crear una región de interés (ROI) en el frame donde colocaremos la máscara
+        roi = frame[y:y+h, x:x+w]
+
+        # Invertir la máscara alfa para obtener la parte del rostro donde se aplicará la máscara
+        mascara_alpha_inv = cv2.bitwise_not(mascara_alpha)
+
+        # Enmascarar la región del rostro en la imagen original
+        fondo = cv2.bitwise_and(roi, roi, mask=mascara_alpha_inv)
+
+        # Enmascarar la máscara RGB
+        mascara_fg = cv2.bitwise_and(mascara_rgb, mascara_rgb, mask=mascara_alpha)
+
+        # Combinar el fondo (parte del rostro sin máscara) y la parte con la máscara
+        resultado = cv2.add(fondo, mascara_fg)
+
+        # Reemplazar la región del rostro con la imagen combinada
+        frame[y:y+h, x:x+w] = resultado
+
+    # Mostrar el frame con la máscara aplicada
+    cv2.imshow('Video con mascara', frame)
+
+    # Presionar 'q' para salir del loop
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Liberar la captura de video y cerrar las ventanas
+video.release()
+cv2.destroyAllWindows()
+```
+## Proyecto 1
+Se utilizo flujo optico para realizar unos controles con los cuales se rotaria, escalaria y trasladaria una imagen previamente predefinida, para ellos se utilizaron tres puntos los cuales se calcula la magnitud de la distancia del recorrido de rastreo del movimiento, para definir si se debe de escalar, ya sea para hacer mas grande o mas pequeño, trasladar hacia la izquierda o a la derecha, o en que direccion rotar la imagen
+```python
+import numpy as np 
+import cv2 as cv
+import math
+
+def trasladar_imagen(direccion, posicion, limite_min, limite_max):
+    if direccion:  # Hacia la derecha
+        if posicion + 30 < limite_max:
+            posicion += 30
+    else:  # Hacia la izquierda
+        if posicion - 30 > limite_min:
+            posicion -= 30
+    return posicion
+
+def escalar_imagen(imagen, scale_y, scale_x, capture):
+    cap_x, cap_y = capture.shape[:2]
+    imagen_x, imagen_y =imagen.shape[:2]
+    
+    if imagen_x*scale_x<cap_x and imagen_x*scale_x>50 and imagen_y*scale_y<cap_y and imagen_y*scale_y>0:
+        scaled_img = cv.resize(imagen, None, fx=scale_x, fy=scale_y, interpolation=cv.INTER_LINEAR)
+        return scaled_img
+    return imagen  # Retorna la imagen original si las escalas están fuera de rango
+
+def rotacion_imagen(r_imagen, angulo):
+    (h, w) = r_imagen.shape[:2]
+    center = (w // 2, h // 2)
+    M = cv.getRotationMatrix2D(center, angulo, 1.0)
+    image_rotated = cv.warpAffine(r_imagen, M, (w, h))
+    return image_rotated
+
+cap = cv.VideoCapture(0)
+
+img = cv.imread("tnt.jpg")
+if img is None:
+    print("Error: no se pudo cargar la imagen.")
+    exit(1)
+
+x, y, c = img.shape
+cap.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
+
+lkparm = dict(winSize=(15, 15), maxLevel=2,
+              criteria=(cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
+
+_, vframe = cap.read()
+vgris = cv.cvtColor(vframe, cv.COLOR_BGR2GRAY)
+p0 = np.array([(250, 120), 
+               (250, 600), (1000, 200)
+               ])
+
+p0 = np.float32(p0[:, np.newaxis, :])
+
+mask = np.zeros_like(vframe) 
+cad = ''
+
+posicion_x, posicion_y = 1280 // 2, 720 // 2
+img_modify = img
+umbral_min = 15  # Umbral mínimo para movimientos válidos
+umbral_gesto = 30  # Umbral para reconocer gestos
+
+while True:
+    _, frame = cap.read()
+    frame = cv.flip(frame, 1)
+    fgris = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    p1, st, err = cv.calcOpticalFlowPyrLK(vgris, fgris, p0, None, **lkparm) 
+
+    if p1 is None:
+        vgris = cv.cvtColor(vframe, cv.COLOR_BGR2GRAY)
+        p0 = np.array([(250, 120), 
+                       (250, 600), (1000, 200)
+                       ])
+        p0 = np.float32(p0[:, np.newaxis, :])
+        mask = np.zeros_like(vframe)
+        cv.imshow('ventana', frame)
+    else:
+        bp1 = p1[st == 1]
+        bp0 = p0[st == 1]
+
+        for i, (nv, vj) in enumerate(zip(bp1, bp0)):
+            a, b = (int(x) for x in nv.ravel())
+            c, d = (int(x) for x in vj.ravel())
+            dist_magnitud = math.sqrt((a - c) ** 2 + (b - d) ** 2)
+
+            if dist_magnitud > umbral_min:  # Filtrar movimientos pequeños
+                frame = cv.line(frame, (c, d), (a, b), (0, 125, 255), 2)
+                frame = cv.circle(frame, (c, d), 2, (255, 255, 255), -1)
+                frame = cv.circle(frame, (a, b), 3, (0, 0, 0), -1)
+
+                if dist_magnitud > umbral_gesto:  # Reconocer gestos significativos
+                    if i == 0:
+                        if a - c > umbral_gesto:
+                            img_modify = escalar_imagen(img_modify, 1.1, 1.1,frame)
+                        elif a - c < -umbral_gesto:
+                            img_modify = escalar_imagen(img_modify, 0.9, 0.9, frame)
+                    elif i == 1:
+                        if a - c > umbral_gesto:
+                            img_modify = rotacion_imagen(img_modify, 90)
+                        elif a - c < -umbral_gesto:
+                            img_modify = rotacion_imagen(img_modify, -90)
+                    elif i == 2:
+                        if a - c > umbral_gesto:
+                            posicion_x = trasladar_imagen(True, posicion_x, 0, frame.shape[1])
+                        elif a - c < -umbral_gesto:
+                            posicion_x = trasladar_imagen(False, posicion_x, 0, frame.shape[1])
+
+        # Ajustar posiciones para evitar salir del marco
+        alto_mod, ancho_mod, _ = img_modify.shape
+        posicion_x = max(0, min(posicion_x, frame.shape[1] - ancho_mod))
+        posicion_y = max(0, min(posicion_y, frame.shape[0] - alto_mod))
+
+        frame[posicion_y:posicion_y + alto_mod, posicion_x:posicion_x + ancho_mod] = img_modify
+
+        cv.imshow('ventana', frame)
+        vgris = fgris.copy()
+
+        if (cv.waitKey(1) & 0xff) == 27:
+            break
+
+cap.release()
+cv.destroyAllWindows()
+
+```
+## Proyecto 2
+Se realizo una granja la cual era manipulada con flujo optico, para ello se realizo un sistema de movimiento de la camara un poco mas sofisticado que el proporcionado con el cual se utiliza la ecuacion del circulo o de un circunferencia, mas aparte se implemento el movimiento de ciertos animales de la granja como por ejemplo un pollito, en el cual se actualizaba su posicion cada que el frame a mostrar en pantalla se actualizaba
