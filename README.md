@@ -1,4 +1,11 @@
 # Actividades Graficación
+Resumen y una breve explicación de las actividades programadas en el semestre
+
+
+
+> [!IMPORTANT]
+> No todas las actividades se mostraron en este segmento, faltaron por ejemplo las actividades realizadas a mano o en libreta.
+
 
 ## 1 Contar ítems
 En este código se lee una imagen (salida.png) y realiza un filtrado de color en el espacio HSV para resaltar un rango específico de tonalidades (color definido por *color1_bajo* y *color1_alto*). Después, convierte la imagen filtrada a escala de grises y combina las áreas filtradas con la imagen original, destacando ciertas regiones (por ejemplo, objetos de cierto color). Finalmente, recorre la imagen resultante píxel a píxel y realiza una comparación con el valor 200 para imprimir “hola” cada vez que encuentra un píxel con valor mayor a 200. En esencia, es un código inicial para contar o detectar píxeles que cumplan cierta condición de color y brillo.
@@ -1073,5 +1080,4 @@ cv.destroyAllWindows()
 ## Proyecto 2
 Se realizo una granja la cual era manipulada con flujo optico, para ello se realizo un sistema de movimiento de la camara un poco mas sofisticado que el proporcionado con el cual se utiliza la ecuacion del circulo o de un circunferencia, mas aparte se implemento el movimiento de ciertos animales de la granja como por ejemplo un pollito, en el cual se actualizaba su posicion cada que el frame a mostrar en pantalla se actualizaba
 
-> [!IMPORTANT]
-> No todas las actividades se mostraron en este segmento, faltaron por ejemplo las actividades realizadas a mano o en libreta.
+
