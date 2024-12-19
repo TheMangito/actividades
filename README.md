@@ -1072,3 +1072,6 @@ cv.destroyAllWindows()
 ```
 ## Proyecto 2
 Se realizo una granja la cual era manipulada con flujo optico, para ello se realizo un sistema de movimiento de la camara un poco mas sofisticado que el proporcionado con el cual se utiliza la ecuacion del circulo o de un circunferencia, mas aparte se implemento el movimiento de ciertos animales de la granja como por ejemplo un pollito, en el cual se actualizaba su posicion cada que el frame a mostrar en pantalla se actualizaba
+
+> [!IMPORTANT]
+> No todas las actividades se mostraron en este segmento, faltaron por ejemplo las actividades realizadas a mano o en libreta.
