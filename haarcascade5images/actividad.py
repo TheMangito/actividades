@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Cargar la máscara que deseas agregar (asegúrate de que sea PNG con transparencia)
-mascara = cv2.imread('300a.png', cv2.IMREAD_UNCHANGED)  # Cargar PNG con transparencia
+mascara = cv2.imread('imagen.png', cv2.IMREAD_UNCHANGED)  # Cargar PNG con transparencia
 
 # Verificar si la imagen tiene un canal alfa
 if mascara.shape[2] != 4:
